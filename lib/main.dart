@@ -49,18 +49,9 @@ class _MainNavigationState extends State<MainNavigation> {
           });
         },
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.dns),
-            label: 'Servers',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.dns), label: 'Servers'),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
         ],
       ),
     );
@@ -90,33 +81,22 @@ class _DashboardPageState extends State<DashboardPage> {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            const SizedBox(height: 20),
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 color: const Color(0xFF170B2D),
                 borderRadius: BorderRadius.circular(24),
               ),
-              child: Row(
-                children: const [
+              child: const Row(
+                children: [
                   Icon(Icons.shield, color: Colors.purpleAccent, size: 40),
                   SizedBox(width: 16),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Tunnel Protected',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      Text('Tunnel Protected', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
                       SizedBox(height: 5),
-                      Text(
-                        'Cyber Secure VPN',
-                        style: TextStyle(color: Colors.white70),
-                      )
+                      Text('Cyber Secure VPN', style: TextStyle(color: Colors.white70))
                     ],
                   )
                 ],
@@ -139,94 +119,129 @@ class _DashboardPageState extends State<DashboardPage> {
                         ? [Colors.greenAccent, Colors.green]
                         : [Colors.purpleAccent, Colors.pinkAccent],
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: connected
-                          ? Colors.greenAccent
-                          : Colors.purpleAccent,
-                      blurRadius: 30,
-                      spreadRadius: 4,
-                    )
-                  ],
                 ),
                 child: Center(
                   child: Text(
                     connected ? 'CONNECTED' : 'CONNECT',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
             ),
-            const SizedBox(height: 40),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                statCard('Download', '0 KB/s'),
-                statCard('Upload', '0 KB/s'),
-              ],
-            )
           ],
         ),
       ),
     );
   }
-
-  Widget statCard(String title, String value) {
-    return Container(
-      width: 150,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: const Color(0xFF170B2D),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
-        children: [
-          Text(title, style: const TextStyle(color: Colors.white70)),
-          const SizedBox(height: 10),
-          Text(value,
-              style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold))
-        ],
-      ),
-    );
-  }
 }
 
-class ServersPage extends StatelessWidget {
+class ServersPage extends StatefulWidget {
   const ServersPage({super.key});
+
+  @override
+  State<ServersPage> createState() => _ServersPageState();
+}
+
+class _ServersPageState extends State<ServersPage> {
+  final List<Map<String, String>> servers = [
+    {
+      'user': 'monyet',
+      'ip': '167.71.193.114',
+      'pass': 'monyet'
+    }
+  ];
+
+  void addServer() {
+    final userController = TextEditingController();
+    final ipController = TextEditingController();
+    final passController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: const Color(0xFF170B2D),
+          title: const Text('Add SSH Server'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: userController,
+                decoration: const InputDecoration(labelText: 'Username'),
+              ),
+              TextField(
+                controller: ipController,
+                decoration: const InputDecoration(labelText: 'IP Server'),
+              ),
+              TextField(
+                controller: passController,
+                decoration: const InputDecoration(labelText: 'Password'),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  servers.add({
+                    'user': userController.text,
+                    'ip': ipController.text,
+                    'pass': passController.text,
+                  });
+                });
+                Navigator.pop(context);
+              },
+              child: const Text('Save'),
+            )
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF090014),
       appBar: AppBar(
-        title: const Text('Servers'),
+        title: const Text('Server Hub'),
         backgroundColor: Colors.transparent,
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          serverCard('Singapore Server', 'Online'),
-          serverCard('Indonesia Server', 'Online'),
-          serverCard('Japan Server', 'Maintenance'),
-        ],
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: Colors.purpleAccent,
+        onPressed: addServer,
+        label: const Text('Add Server'),
+        icon: const Icon(Icons.add),
       ),
-    );
-  }
+      body: ListView.builder(
+        padding: const EdgeInsets.all(20),
+        itemCount: servers.length,
+        itemBuilder: (context, index) {
+          final server = servers[index];
 
-  Widget serverCard(String name, String status) {
-    return Card(
-      color: const Color(0xFF170B2D),
-      child: ListTile(
-        leading: const Icon(Icons.cloud, color: Colors.purpleAccent),
-        title: Text(name, style: const TextStyle(color: Colors.white)),
-        subtitle: Text(status, style: const TextStyle(color: Colors.white70)),
+          return Container(
+            margin: const EdgeInsets.only(bottom: 20),
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: const Color(0xFF170B2D),
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(server['user']!, style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 10),
+                Text(server['ip']!, style: const TextStyle(color: Colors.white70)),
+                const SizedBox(height: 10),
+                Text(server['pass']!, style: const TextStyle(color: Colors.white54)),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
@@ -245,24 +260,11 @@ class SettingsPage extends StatelessWidget {
       ),
       body: ListView(
         padding: const EdgeInsets.all(20),
-        children: [
-          settingTile(Icons.security, 'VPN Protection'),
-          settingTile(Icons.speed, 'Connection Speed'),
-          settingTile(Icons.language, 'DNS Settings'),
-          settingTile(Icons.info, 'About Application'),
+        children: const [
+          ListTile(title: Text('VPN Protection')),
+          ListTile(title: Text('DNS Settings')),
+          ListTile(title: Text('Application Info')),
         ],
-      ),
-    );
-  }
-
-  Widget settingTile(IconData icon, String title) {
-    return Card(
-      color: const Color(0xFF170B2D),
-      child: ListTile(
-        leading: Icon(icon, color: Colors.purpleAccent),
-        title: Text(title, style: const TextStyle(color: Colors.white)),
-        trailing: const Icon(Icons.arrow_forward_ios,
-            color: Colors.white54),
       ),
     );
   }
