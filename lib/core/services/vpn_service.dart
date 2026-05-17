@@ -1,21 +1,30 @@
 import 'package:flutter/services.dart';
 
 class VPNService {
-  static const platform = MethodChannel('minizivpn/vpn');
+
+  static const platform = MethodChannel('zivpn/vpn');
 
   Future<void> connect() async {
+
     try {
-      await platform.invokeMethod('connectVPN');
+
+      await platform.invokeMethod("startVPN");
+
     } catch (e) {
-      print('VPN connect error: $e');
+
+      print("VPN START ERROR: $e");
     }
   }
 
   Future<void> disconnect() async {
+
     try {
-      await platform.invokeMethod('disconnectVPN');
+
+      await platform.invokeMethod("stopVPN");
+
     } catch (e) {
-      print('VPN disconnect error: $e');
+
+      print("VPN STOP ERROR: $e");
     }
   }
 }
