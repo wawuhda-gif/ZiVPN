@@ -1,23 +1,30 @@
+// File: android/app/src/main/kotlin/com/minizivpn/NativeRunner.kt
+
 package com.minizivpn
 
 import android.content.Context
 import java.io.File
+import java.io.FileOutputStream
 
 object NativeRunner {
 
-    fun prepareBinary(context: Context, binaryName: String): File {
-        val outFile = File(context.filesDir, binaryName)
+    fun extractBin(context: Context, fileName: String) {
+
+        val outFile = File(context.filesDir, "bin/$fileName")
+
+        outFile.parentFile?.mkdirs()
 
         if (!outFile.exists()) {
-            context.assets.open("bin/$binaryName").use { input ->
-                outFile.outputStream().use { output ->
-                    input.copyTo(output)
-                }
-            }
+
+            val input = context.assets.open("bin/$fileName")
+            val output = FileOutputStream(outFile)
+
+            input.copyTo(output)
+
+            input.close()
+            output.close()
+
+            outFile.setExecutable(true)
         }
-
-        outFile.setExecutable(true)
-
-        return outFile
     }
 }
