@@ -13,7 +13,56 @@ class MiniZiVPN extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'MiniZiVPN',
       theme: ThemeData.dark(),
-      home: const DashboardPage(),
+      home: const MainNavigation(),
+    );
+  }
+}
+
+class MainNavigation extends StatefulWidget {
+  const MainNavigation({super.key});
+
+  @override
+  State<MainNavigation> createState() => _MainNavigationState();
+}
+
+class _MainNavigationState extends State<MainNavigation> {
+  int currentIndex = 0;
+
+  final List<Widget> pages = const [
+    DashboardPage(),
+    ServersPage(),
+    SettingsPage(),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: pages[currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: currentIndex,
+        backgroundColor: const Color(0xFF12001F),
+        selectedItemColor: Colors.purpleAccent,
+        unselectedItemColor: Colors.white54,
+        onTap: (index) {
+          setState(() {
+            currentIndex = index;
+          });
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.dns),
+            label: 'Servers',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
+        ],
+      ),
     );
   }
 }
@@ -123,25 +172,6 @@ class _DashboardPageState extends State<DashboardPage> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: const Color(0xFF12001F),
-        selectedItemColor: Colors.purpleAccent,
-        unselectedItemColor: Colors.white54,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.dns),
-            label: 'Servers',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
-        ],
-      ),
     );
   }
 
@@ -155,20 +185,84 @@ class _DashboardPageState extends State<DashboardPage> {
       ),
       child: Column(
         children: [
-          Text(
-            title,
-            style: const TextStyle(color: Colors.white70),
-          ),
+          Text(title, style: const TextStyle(color: Colors.white70)),
           const SizedBox(height: 10),
-          Text(
-            value,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          )
+          Text(value,
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold))
         ],
+      ),
+    );
+  }
+}
+
+class ServersPage extends StatelessWidget {
+  const ServersPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF090014),
+      appBar: AppBar(
+        title: const Text('Servers'),
+        backgroundColor: Colors.transparent,
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(20),
+        children: [
+          serverCard('Singapore Server', 'Online'),
+          serverCard('Indonesia Server', 'Online'),
+          serverCard('Japan Server', 'Maintenance'),
+        ],
+      ),
+    );
+  }
+
+  Widget serverCard(String name, String status) {
+    return Card(
+      color: const Color(0xFF170B2D),
+      child: ListTile(
+        leading: const Icon(Icons.cloud, color: Colors.purpleAccent),
+        title: Text(name, style: const TextStyle(color: Colors.white)),
+        subtitle: Text(status, style: const TextStyle(color: Colors.white70)),
+      ),
+    );
+  }
+}
+
+class SettingsPage extends StatelessWidget {
+  const SettingsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF090014),
+      appBar: AppBar(
+        title: const Text('Settings'),
+        backgroundColor: Colors.transparent,
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(20),
+        children: [
+          settingTile(Icons.security, 'VPN Protection'),
+          settingTile(Icons.speed, 'Connection Speed'),
+          settingTile(Icons.language, 'DNS Settings'),
+          settingTile(Icons.info, 'About Application'),
+        ],
+      ),
+    );
+  }
+
+  Widget settingTile(IconData icon, String title) {
+    return Card(
+      color: const Color(0xFF170B2D),
+      child: ListTile(
+        leading: Icon(icon, color: Colors.purpleAccent),
+        title: Text(title, style: const TextStyle(color: Colors.white)),
+        trailing: const Icon(Icons.arrow_forward_ios,
+            color: Colors.white54),
       ),
     );
   }
