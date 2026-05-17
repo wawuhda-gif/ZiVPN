@@ -8,7 +8,7 @@ import io.flutter.plugin.common.MethodChannel
 
 class MainActivity: FlutterActivity() {
 
-    private val CHANNEL = "minizivpn/vpn"
+    private val CHANNEL = "zivpn/vpn"
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -27,7 +27,10 @@ class MainActivity: FlutterActivity() {
                     if (intent != null) {
                         startActivityForResult(intent, 100)
                     } else {
-                        TunnelManager.start(this)
+
+                        startService(
+                            Intent(this, MyVpnService::class.java)
+                        )
                     }
 
                     result.success(true)
@@ -35,7 +38,9 @@ class MainActivity: FlutterActivity() {
 
                 "stopVPN" -> {
 
-                    TunnelManager.stop(this)
+                    stopService(
+                        Intent(this, MyVpnService::class.java)
+                    )
 
                     result.success(true)
                 }
