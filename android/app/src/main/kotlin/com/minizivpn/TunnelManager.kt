@@ -1,19 +1,27 @@
+// File: android/app/src/main/kotlin/com/minizivpn/TunnelManager.kt
+
 package com.minizivpn
 
 import android.content.Context
+import android.content.Intent
+import android.net.VpnService
 
 object TunnelManager {
 
-    fun setup(context: Context) {
+    fun start(context: Context) {
 
-        NativeRunner.prepareBinary(
-            context,
-            "tun2socks-linux-amd64"
-        )
+        NativeRunner.extractBin(context, "udp-zivpn-linux-amd64")
+        NativeRunner.extractBin(context, "tun2socks-linux-amd64")
 
-        NativeRunner.prepareBinary(
-            context,
-            "udp-zivpn-linux-amd64"
-        )
+        val intent = Intent(context, MyVpnService::class.java)
+
+        context.startService(intent)
+    }
+
+    fun stop(context: Context) {
+
+        val intent = Intent(context, MyVpnService::class.java)
+
+        context.stopService(intent)
     }
 }
