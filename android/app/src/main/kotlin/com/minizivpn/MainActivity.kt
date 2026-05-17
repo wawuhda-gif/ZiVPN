@@ -25,7 +25,9 @@ class MainActivity: FlutterActivity() {
                     val intent = VpnService.prepare(this)
 
                     if (intent != null) {
+
                         startActivityForResult(intent, 100)
+
                     } else {
 
                         startService(
