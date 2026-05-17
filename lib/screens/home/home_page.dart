@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
+import '../../core/services/vpn_service.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  bool connected = false;
+  final vpn = VPNService();
 
   @override
   Widget build(BuildContext context) {
@@ -12,57 +21,64 @@ class HomePage extends StatelessWidget {
         elevation: 0,
         title: const Text('MiniZiVPN'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
+      body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              width: 220,
-              height: 220,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: Colors.purpleAccent,
-                  width: 4,
+            GestureDetector(
+              onTap: () async {
+                if (!connected) {
+                  await vpn.connect();
+                } else {
+                  await vpn.disconnect();
+                }
+
+                setState(() {
+                  connected = !connected;
+                });
+              },
+              child: Container(
+                width: 220,
+                height: 220,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: connected
+                        ? Colors.greenAccent
+                        : Colors.purpleAccent,
+                    width: 4,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: connected
+                          ? Colors.greenAccent
+                          : Colors.purpleAccent,
+                      blurRadius: 30,
+                      spreadRadius: 4,
+                    )
+                  ],
                 ),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.purpleAccent,
-                    blurRadius: 30,
-                    spreadRadius: 4,
-                  )
-                ],
-              ),
-              child: const Center(
-                child: Text(
-                  'CONNECT',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+                child: Center(
+                  child: Text(
+                    connected ? 'CONNECTED' : 'CONNECT',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
             ),
             const SizedBox(height: 40),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: const [
-                Column(
-                  children: [
-                    Text('DOWNLOAD', style: TextStyle(color: Colors.white70)),
-                    SizedBox(height: 8),
-                    Text('0 KB/s', style: TextStyle(color: Colors.white)),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Text('UPLOAD', style: TextStyle(color: Colors.white70)),
-                    SizedBox(height: 8),
-                    Text('0 KB/s', style: TextStyle(color: Colors.white)),
-                  ],
-                )
-              ],
+            Text(
+              connected
+                  ? 'VPN Tunnel Active'
+                  : 'Disconnected',
+              style: const TextStyle(
+                color: Colors.white70,
+                fontSize: 18,
+              ),
             )
           ],
         ),
