@@ -17,11 +17,22 @@ jobs:
         with:
           flutter-version: '3.22.0'
 
-      - run: flutter create . --project-name zivpn
+      - name: Clean old platforms
+        run: |
+          rm -rf android
+          rm -rf ios
+          rm -rf linux
+          rm -rf macos
+          rm -rf windows
 
-      - run: flutter pub get
+      - name: Generate Flutter Structure
+        run: flutter create . --project-name zivpn
 
-      - run: flutter build apk --release
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Build APK
+        run: flutter build apk --release
 
       - uses: actions/upload-artifact@v4
         with:
